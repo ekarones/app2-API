@@ -1,0 +1,9 @@
+# Ignorar la carpeta database
+database/
+private/
+
+# Ignorar el entorno virtual
+.venv/
+
+# Ignorar los archivos de caché de Python
+__pycache__/
