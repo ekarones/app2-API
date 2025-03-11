@@ -41,7 +41,7 @@ async def upload_image(user_id: str = Form(...), image: UploadFile = File(...)):
         return {"message": "Error al guardar la imagen", "error": str(e)}
 
     if is_leaf(file_path) == False:
-        return {"message": "Bad image"}
+        raise HTTPException(status_code=400, detail="Bad image")
 
     disease_id, disease_name, description, name_image = predict_img(file_path)
     conn = sqlite3.connect(DATABASE)
@@ -114,8 +114,6 @@ def get_records_by_user(user_id: int = 1):
 
 
 # DASHBOARD
-
-
 @router.get("/get-top-users")
 def get_top_users():
     conn = sqlite3.connect(DATABASE)
