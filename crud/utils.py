@@ -95,8 +95,8 @@ def get_advices_by_disease(disease_name: str):
     )
     advices = cursor.fetchall()
     conn.close()
-    if not advices:
-        raise HTTPException(status_code=404, detail="Disease not found")
+    # if not advices:
+        # raise HTTPException(status_code=404, detail="Disease not found")
     return {"message": "success", "data": advices}
 
 
