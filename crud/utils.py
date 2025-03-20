@@ -55,13 +55,46 @@ async def upload_image(user_id: str = Form(...), image: UploadFile = File(...)):
 
     return {
         "message": "Imagen procesada con éxito",
+        "record_image": unique_filename,#imagen enviada por el usuario
         "disease_id": disease_id,
-        "file_name": unique_filename,
         "disease_name": disease_name,
         "description": description,
-        "name_image": name_image,
+        "disease_image": name_image,#imagen guardada de la enfermedad
     }
 
+@router.get("/get-diagnose-by-record/{record_id}")
+def get_diagnose_by_record(record_id: int):
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    query = """
+    SELECT 
+        r.image_path,
+        r.disease_id,
+        r.disease_name,
+        d.description,
+        d.image_name
+    FROM 
+        records r
+    JOIN 
+        diseases d ON r.disease_id = d.id
+    WHERE 
+        r.id = ?;
+    """
+    cursor.execute(query, (record_id,))
+    result = cursor.fetchone()
+
+    conn.close()
+
+    if result:
+        return {
+            "record_image": result[0],
+            "disease_id": result[1],
+            "disease_name": result[2],
+            "description": result[3],
+            "disease_image": result[4]
+        }
+    else:
+        return None
 
 @router.get("/get-image-assets")
 def get_image_assets(filename: str):
@@ -95,9 +128,7 @@ def get_advices_by_disease(disease_name: str):
     )
     advices = cursor.fetchall()
     conn.close()
-    # if not advices:
-        # raise HTTPException(status_code=404, detail="Disease not found")
-    return {"message": "success", "data": advices}
+    return {"message": "success", "data": advices} # Retorna [] en caso de que no haya consejos para la enfermedad
 
 
 @router.get("/get-records-by-user/{user_id}")
