@@ -81,4 +81,4 @@ VALUES
 ('Scab (Sarna del Manzano)', 'Utiliza variedades de manzano resistentes a la sarna para reducir la susceptibilidad a la enfermedad.'),
 ('Scab (Sarna del Manzano)', 'Aplica tratamientos con fungicidas de manera preventiva en la primavera y durante períodos húmedos.');
 
-INSERT INTO "notifications" ("title", "description","creation_date") VALUES ('Version 1.0.0', 'first version', DATETIME('now', 'localtime'));
+INSERT INTO "notifications" ("title", "description", "creation_date") VALUES ('Version 1.0.0', 'first version', DATETIME('now', 'localtime'));
