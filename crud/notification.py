@@ -6,6 +6,15 @@ router = APIRouter()
 
 DATABASE = "database/app-db.sqlite"
 
+@router.get('/get-all-notifications/')
+def get_all_notifications():
+    conn=sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM notifications")
+    notifications = cursor.fetchall()
+    conn.close() 
+    return {"success": True, "data": notifications}
+
 @router.get("/notifications/")
 def get_notifications(page: int = 1, per_page: int = 10):
     conn = sqlite3.connect(DATABASE)
