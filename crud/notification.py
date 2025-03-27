@@ -41,7 +41,7 @@ def create_notification(notification: Notification):
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO notifications (title, description) VALUES (?, ?)",
+        "INSERT INTO notifications (title, description, creation_date) VALUES (?, ?, DATETIME('now', 'localtime'))",
         (notification.title, notification.description),
     )
     conn.commit()
