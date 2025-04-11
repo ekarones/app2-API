@@ -96,7 +96,7 @@ def get_diagnose_by_record(record_id: int):
     else:
         return None
 
-@router.get("/get-image-assets")
+@router.get("/get-image-assets/")
 def get_image_assets(filename: str):
     folder_path = Path(IMAGES_DISEASES_DIR)
     if not folder_path.exists():
@@ -107,7 +107,7 @@ def get_image_assets(filename: str):
     return FileResponse(str(image_path))
 
 
-@router.get("/get-image")
+@router.get("/get-image/")
 def get_image(filename: str):
     folder_path = Path(IMAGES_RECORDS_DIR)
     if not folder_path.exists():
@@ -118,7 +118,7 @@ def get_image(filename: str):
     return FileResponse(str(image_path))
 
 
-@router.get("/get-advices-by-disease")
+@router.get("/get-advices-by-disease/")
 def get_advices_by_disease(disease_name: str):
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
@@ -145,7 +145,7 @@ def get_records_by_user(user_id: int = 1):
 
 
 # DASHBOARD
-@router.get("/get-top-users")
+@router.get("/get-top-users/")
 def get_top_users():
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
@@ -165,7 +165,7 @@ def get_top_users():
     return {"message": "success", "data": results}
 
 
-@router.get("/get-top-diseases")
+@router.get("/get-top-diseases/")
 def get_top_diseases():
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
@@ -185,7 +185,7 @@ def get_top_diseases():
     return {"message": "success", "data": results}
 
 
-@router.get("/get-advices-count")
+@router.get("/get-advices-count/")
 def get_advices_count():
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
@@ -205,7 +205,7 @@ def get_advices_count():
     return {"message": "success", "data": results}
 
 
-@router.get("/get-global-count")
+@router.get("/get-global-count/")
 def get_global_count():
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
