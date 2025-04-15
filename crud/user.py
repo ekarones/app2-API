@@ -8,22 +8,23 @@ DATABASE = "database/app-db.sqlite"
 
 
 @router.get("/users/")
-def get_users(page: int = 1, per_page: int = 10):
+def get_users(page: int = 1, limit: int = 10):
     conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    offset = (page - 1) * per_page
-    cursor.execute("SELECT * FROM users LIMIT ? OFFSET ?", (per_page, offset))
+    offset = (page - 1) * limit
+    cursor.execute("SELECT * FROM users LIMIT ? OFFSET ?", (limit, offset))
     rows = cursor.fetchall()
     users = [dict(row) for row in rows]
     cursor.execute("SELECT COUNT(*) FROM users")
     total_records = cursor.fetchone()[0]
     conn.close()
-    total_pages = (total_records + per_page - 1) // per_page
+    total_pages = (total_records + limit - 1) // limit
     return {
         "message": "Users successfully obtained",
         "data": users,
         "page": page,
-        "per_page": per_page,
+        "limit": limit,
         "total_records": total_records,
         "total_pages": total_pages,
     }
