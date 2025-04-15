@@ -13,7 +13,8 @@ def get_users(page: int = 1, per_page: int = 10):
     cursor = conn.cursor()
     offset = (page - 1) * per_page
     cursor.execute("SELECT * FROM users LIMIT ? OFFSET ?", (per_page, offset))
-    users = cursor.fetchall()
+    rows = cursor.fetchall()
+    users = [dict(row) for row in rows]
     cursor.execute("SELECT COUNT(*) FROM users")
     total_records = cursor.fetchone()[0]
     conn.close()
