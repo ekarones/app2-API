@@ -18,7 +18,7 @@ def get_admins(page: int = 1, limit: int = 10, search: str = None):
     if search:
         # Buscar por ID exacto o por nombre que contenga el término
         query = """
-            SELECT * FROM adminds 
+            SELECT * FROM admins 
             WHERE id = ? OR username LIKE ? 
             LIMIT ? OFFSET ?
         """
@@ -26,26 +26,26 @@ def get_admins(page: int = 1, limit: int = 10, search: str = None):
         rows = cursor.fetchall()
 
         count_query = """
-            SELECT COUNT(*) FROM adminds 
+            SELECT COUNT(*) FROM admins 
             WHERE id = ? OR username LIKE ?
         """
         cursor.execute(count_query, (search, f"%{search}%"))
     else:
-        cursor.execute("SELECT * FROM adminds LIMIT ? OFFSET ?", (limit, offset))
+        cursor.execute("SELECT * FROM admins LIMIT ? OFFSET ?", (limit, offset))
         rows = cursor.fetchall()
 
-        cursor.execute("SELECT COUNT(*) FROM adminds")
+        cursor.execute("SELECT COUNT(*) FROM admins")
 
     total_records = cursor.fetchone()[0]
     conn.close()
 
     total_pages = (total_records + limit - 1) // limit
 
-    adminds = [dict(row) for row in rows]
+    admins = [dict(row) for row in rows]
 
     return {
         "message": "Adminds successfully obtained",
-        "data": adminds,
+        "data": admins,
         "page": page,
         "limit": limit,
         "total_records": total_records,
