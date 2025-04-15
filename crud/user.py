@@ -8,18 +8,41 @@ DATABASE = "database/app-db.sqlite"
 
 
 @router.get("/users/")
-def get_users(page: int = 1, limit: int = 10):
+def get_users(page: int = 1, limit: int = 10, search: str = None):
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
+
     offset = (page - 1) * limit
-    cursor.execute("SELECT * FROM users LIMIT ? OFFSET ?", (limit, offset))
-    rows = cursor.fetchall()
-    users = [dict(row) for row in rows]
-    cursor.execute("SELECT COUNT(*) FROM users")
+
+    if search:
+        # Buscar por ID exacto o por nombre que contenga el término
+        query = """
+            SELECT * FROM users 
+            WHERE id = ? OR username LIKE ? 
+            LIMIT ? OFFSET ?
+        """
+        cursor.execute(query, (search, f"%{search}%", limit, offset))
+        rows = cursor.fetchall()
+
+        count_query = """
+            SELECT COUNT(*) FROM users 
+            WHERE id = ? OR username LIKE ?
+        """
+        cursor.execute(count_query, (search, f"%{search}%"))
+    else:
+        cursor.execute("SELECT * FROM users LIMIT ? OFFSET ?", (limit, offset))
+        rows = cursor.fetchall()
+
+        cursor.execute("SELECT COUNT(*) FROM users")
+
     total_records = cursor.fetchone()[0]
     conn.close()
+
     total_pages = (total_records + limit - 1) // limit
+
+    users = [dict(row) for row in rows]
+
     return {
         "message": "Users successfully obtained",
         "data": users,
