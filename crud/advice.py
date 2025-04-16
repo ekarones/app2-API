@@ -8,21 +8,46 @@ DATABASE = "database/app-db.sqlite"
 
 
 @router.get("/advices/")
-def get_advices(page: int = 1, per_page: int = 10):
+def get_advices(page: int = 1, limit: int = 10, search: str = None):
     conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    offset = (page - 1) * per_page
-    cursor.execute("SELECT * FROM advices LIMIT ? OFFSET ?", (per_page, offset))
-    advices = cursor.fetchall()
-    cursor.execute("SELECT COUNT(*) FROM advices")
+
+    offset = (page - 1) * limit
+
+    if search:
+        # Buscar por ID exacto o por nombre que contenga el término
+        query = """
+            SELECT * FROM advices 
+            WHERE id = ? OR disease_name LIKE ? 
+            LIMIT ? OFFSET ?
+        """
+        cursor.execute(query, (search, f"%{search}%", limit, offset))
+        rows = cursor.fetchall()
+
+        count_query = """
+            SELECT COUNT(*) FROM advices 
+            WHERE id = ? OR disease_name LIKE ?
+        """
+        cursor.execute(count_query, (search, f"%{search}%"))
+    else:
+        cursor.execute("SELECT * FROM advices LIMIT ? OFFSET ?", (limit, offset))
+        rows = cursor.fetchall()
+
+        cursor.execute("SELECT COUNT(*) FROM advices")
+
     total_records = cursor.fetchone()[0]
     conn.close()
-    total_pages = (total_records + per_page - 1) // per_page
+
+    total_pages = (total_records + limit - 1) // limit
+
+    advices = [dict(row) for row in rows]
+
     return {
         "message": "Advices successfully obtained",
         "data": advices,
         "page": page,
-        "per_page": per_page,
+        "limit": limit,
         "total_records": total_records,
         "total_pages": total_pages,
     }

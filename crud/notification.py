@@ -6,6 +6,52 @@ router = APIRouter()
 
 DATABASE = "database/app-db.sqlite"
 
+
+@router.get("/notifications/")
+def get_notifications(page: int = 1, limit: int = 10, search: str = None):
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    offset = (page - 1) * limit
+
+    if search:
+        # Buscar por ID exacto o por nombre que contenga el término
+        query = """
+            SELECT * FROM notifications 
+            WHERE id = ? OR title LIKE ? 
+            LIMIT ? OFFSET ?
+        """
+        cursor.execute(query, (search, f"%{search}%", limit, offset))
+        rows = cursor.fetchall()
+
+        count_query = """
+            SELECT COUNT(*) FROM notifications 
+            WHERE id = ? OR title LIKE ?
+        """
+        cursor.execute(count_query, (search, f"%{search}%"))
+    else:
+        cursor.execute("SELECT * FROM notifications LIMIT ? OFFSET ?", (limit, offset))
+        rows = cursor.fetchall()
+
+        cursor.execute("SELECT COUNT(*) FROM notifications")
+
+    total_records = cursor.fetchone()[0]
+    conn.close()
+
+    total_pages = (total_records + limit - 1) // limit
+
+    notifications = [dict(row) for row in rows]
+
+    return {
+        "message": "Notifications successfully obtained",
+        "data": notifications,
+        "page": page,
+        "limit": limit,
+        "total_records": total_records,
+        "total_pages": total_pages,
+    }
+
 @router.get('/get-all-notifications/')
 def get_all_notifications():
     conn=sqlite3.connect(DATABASE)
@@ -14,26 +60,6 @@ def get_all_notifications():
     notifications = cursor.fetchall()
     conn.close() 
     return {"success": True, "data": notifications}
-
-@router.get("/notifications/")
-def get_notifications(page: int = 1, per_page: int = 10):
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
-    offset = (page - 1) * per_page
-    cursor.execute("SELECT * FROM notifications LIMIT ? OFFSET ?", (per_page, offset))
-    notifications = cursor.fetchall()
-    cursor.execute("SELECT COUNT(*) FROM notifications")
-    total_records = cursor.fetchone()[0]
-    conn.close()
-    total_pages = (total_records + per_page - 1) // per_page
-    return {
-        "message": "Notifications successfully obtained",
-        "data": notifications,
-        "page": page,
-        "per_page": per_page,
-        "total_records": total_records,
-        "total_pages": total_pages,
-    }
 
 
 @router.post("/notifications/")

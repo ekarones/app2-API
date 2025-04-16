@@ -48,7 +48,7 @@ def get_diseases(page: int = 1, limit: int = 10, search: str = None):
     diseases = [dict(row) for row in rows]
 
     return {
-        "message": "Adminds successfully obtained",
+        "message": "Diseases successfully obtained",
         "data": diseases,
         "page": page,
         "limit": limit,
