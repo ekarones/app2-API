@@ -12,21 +12,46 @@ IMAGES_DISEASES_DIR = Path("private/diseases")
 
 
 @router.get("/diseases/")
-def get_diseases(page: int = 1, per_page: int = 10):
+def get_diseases(page: int = 1, limit: int = 10, search: str = None):
     conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    offset = (page - 1) * per_page
-    cursor.execute("SELECT * FROM diseases LIMIT ? OFFSET ?", (per_page, offset))
-    diseases = cursor.fetchall()
-    cursor.execute("SELECT COUNT(*) FROM diseases")
+
+    offset = (page - 1) * limit
+
+    if search:
+        # Buscar por ID exacto o por nombre que contenga el término
+        query = """
+            SELECT * FROM diseases 
+            WHERE id = ? OR name LIKE ? 
+            LIMIT ? OFFSET ?
+        """
+        cursor.execute(query, (search, f"%{search}%", limit, offset))
+        rows = cursor.fetchall()
+
+        count_query = """
+            SELECT COUNT(*) FROM diseases 
+            WHERE id = ? OR name LIKE ?
+        """
+        cursor.execute(count_query, (search, f"%{search}%"))
+    else:
+        cursor.execute("SELECT * FROM diseases LIMIT ? OFFSET ?", (limit, offset))
+        rows = cursor.fetchall()
+
+        cursor.execute("SELECT COUNT(*) FROM diseases")
+
     total_records = cursor.fetchone()[0]
     conn.close()
-    total_pages = (total_records + per_page - 1) // per_page
+
+    total_pages = (total_records + limit - 1) // limit
+
+    diseases = [dict(row) for row in rows]
+
     return {
-        "message": "Diseases successfully obtained",
+        "message": "Adminds successfully obtained",
         "data": diseases,
         "page": page,
-        "per_page": per_page,
+        "limit": limit,
         "total_records": total_records,
         "total_pages": total_pages,
     }
