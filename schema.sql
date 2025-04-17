@@ -39,7 +39,7 @@ CREATE TABLE "admins" (
 CREATE TABLE "records" (
 	"id"	INTEGER NOT NULL,
 	"user_id"	INTEGER NOT NULL,
-	"image_path"	TEXT NOT NULL,
+	"image_name"	TEXT NOT NULL,
 	"disease_id"	INTEGER NOT NULL,
 	"disease_name"	TEXT NOT NULL,
 	"diagnosis_date"	TEXT NOT NULL,

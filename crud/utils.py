@@ -49,7 +49,7 @@ async def upload_image(user_id: str = Form(...), image: UploadFile = File(...)):
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO records (user_id, image_path, disease_id, disease_name, diagnosis_date) VALUES (?, ?, ?, ?, DATETIME('now', 'localtime'))",
+        "INSERT INTO records (user_id, image_name, disease_id, disease_name, diagnosis_date) VALUES (?, ?, ?, ?, DATETIME('now', 'localtime'))",
         (user_id, unique_filename, disease_id, disease_name),
     )
     conn.commit()
@@ -71,7 +71,7 @@ def get_diagnose_by_record(record_id: int):
     cursor = conn.cursor()
     query = """
     SELECT 
-        r.image_path,
+        r.image_name,
         r.disease_id,
         r.disease_name,
         d.description,
