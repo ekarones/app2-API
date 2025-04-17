@@ -18,12 +18,14 @@ IMAGES_DISEASES_DIR = Path("private/diseases")
 @router.get("/diseases-names/")
 def create_disease():
     conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute(
         "SELECT id, name FROM diseases",
     )
-    diseases_names = cursor.fetchall()
+    rows = cursor.fetchall()
     conn.close()
+    diseases_names = [dict(row) for row in rows]
     return {"message": "success", "data": diseases_names}
 
 
@@ -55,12 +57,13 @@ async def upload_image(user_id: str = Form(...), image: UploadFile = File(...)):
 
     return {
         "message": "Imagen procesada con éxito",
-        "record_image": unique_filename,#imagen enviada por el usuario
+        "record_image": unique_filename,  # imagen enviada por el usuario
         "disease_id": disease_id,
         "disease_name": disease_name,
         "description": description,
-        "disease_image": name_image,#imagen guardada de la enfermedad
+        "disease_image": name_image,  # imagen guardada de la enfermedad
     }
+
 
 @router.get("/get-diagnose-by-record/{record_id}")
 def get_diagnose_by_record(record_id: int):
@@ -91,10 +94,11 @@ def get_diagnose_by_record(record_id: int):
             "disease_id": result[1],
             "disease_name": result[2],
             "description": result[3],
-            "disease_image": result[4]
+            "disease_image": result[4],
         }
     else:
         return None
+
 
 @router.get("/get-image-assets/")
 def get_image_assets(filename: str):
@@ -128,7 +132,10 @@ def get_advices_by_disease(disease_name: str):
     )
     advices = cursor.fetchall()
     conn.close()
-    return {"message": "success", "data": advices} # Retorna [] en caso de que no haya consejos para la enfermedad
+    return {
+        "message": "success",
+        "data": advices,
+    }  # Retorna [] en caso de que no haya consejos para la enfermedad
 
 
 @router.get("/get-records-by-user/{user_id}")
