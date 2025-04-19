@@ -155,6 +155,7 @@ def get_records_by_user(user_id: int = 1):
 @router.get("/get-top-users/")
 def get_top_users():
     conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
     query = """
@@ -166,15 +167,17 @@ def get_top_users():
     """
 
     cursor.execute(query)
-    results = cursor.fetchall()
+    rows = cursor.fetchall()
     conn.close()
+    data = [dict(row) for row in rows]
 
-    return {"message": "success", "data": results}
+    return {"message": "success", "data": data}
 
 
 @router.get("/get-top-diseases/")
 def get_top_diseases():
     conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
     query = """
@@ -186,15 +189,17 @@ def get_top_diseases():
     """
 
     cursor.execute(query)
-    results = cursor.fetchall()
+    rows = cursor.fetchall()
     conn.close()
+    data = [dict(row) for row in rows]
 
-    return {"message": "success", "data": results}
+    return {"message": "success", "data": data}
 
 
 @router.get("/get-advices-count/")
 def get_advices_count():
     conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
     query = """
@@ -206,19 +211,21 @@ def get_advices_count():
     """
 
     cursor.execute(query)
-    results = cursor.fetchall()
+    rows = cursor.fetchall()
     conn.close()
+    data = [dict(row) for row in rows]
 
-    return {"message": "success", "data": results}
+    return {"message": "success", "data": data}
 
 
 @router.get("/get-global-count/")
 def get_global_count():
     conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
     query = """
-    SELECT 'Usuarios' AS nombre_tabla, COUNT(*) AS cantidad_registros FROM users
+    SELECT 'Usuarios' AS table_name, COUNT(*) AS count FROM users
     UNION ALL
     SELECT 'Administradores', COUNT(*) FROM admins
     UNION ALL
@@ -232,7 +239,8 @@ def get_global_count():
     """
 
     cursor.execute(query)
-    results = cursor.fetchall()
+    rows = cursor.fetchall()
     conn.close()
+    data = [dict(row) for row in rows]
 
-    return {"message": "success", "data": results}
+    return {"message": "success", "data": data}
