@@ -14,7 +14,7 @@ diseases = [
     "Cedar Rust (Roya del Cedro y Manzano)",
     "Scab (Sarna del Manzano)",
 ]
-feature_extractor = load_model("trained_models/feature_extractor_cnn.h5")
+feature_extractor = load_model("trained_models/feature_extractor_cnn.keras")
 pca_model = load("trained_models/pca_model.joblib")
 svm_model = load("trained_models/svm_model.joblib")
 
