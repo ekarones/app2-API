@@ -4,7 +4,7 @@ from pathlib import Path
 import uuid
 import sqlite3
 
-from app_models.filter_model import is_leaf
+from app_models.filter_model import analizar_imagen_con_gpt
 from app_models.predict_model import predict_img
 
 
@@ -38,11 +38,11 @@ async def upload_image(user_id: str = Form(...), image: UploadFile = File(...)):
         with open(file_path, "wb") as f:
             content = await image.read()
             f.write(content)
-            # print('{"message": "Imagen guardada exitosamente", "filename": image.filename}')
+            print(f'{{"message": "Imagen guardada exitosamente", "filename": "{file_path}"}}')
     except Exception as e:
         return {"message": "Error al guardar la imagen", "error": str(e)}
 
-    if is_leaf(file_path) == False:
+    if analizar_imagen_con_gpt(file_path) == "0":
         raise HTTPException(status_code=400, detail="Bad image")
 
     disease_id, disease_name, description, name_image = predict_img(file_path)
