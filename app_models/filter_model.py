@@ -1,10 +1,15 @@
-import openai
+import os
+from dotenv import load_dotenv
 from openai import OpenAI
 import base64
 
-client = OpenAI(
-    api_key="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"
-)
+# Cargar variables del archivo .env
+load_dotenv()
+
+# Obtener la clave desde las variables de entorno
+api_key = os.getenv("OPENAI_API_KEY")
+
+client = OpenAI(api_key=api_key)
 
 
 def analizar_imagen_con_gpt(url_imagen: str) -> str:
