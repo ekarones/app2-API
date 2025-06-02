@@ -9,10 +9,12 @@ DATABASE = Path("database/app-db.sqlite")
 
 IMG_HEIGHT, IMG_WIDTH = 256, 256
 diseases = [
-    "Black Rot (Pudrición Negra)",
-    "Healthy (Saludable)",
-    "Cedar Rust (Roya del Cedro y Manzano)",
-    "Scab (Sarna del Manzano)",
+    "Sarna del Manzano"
+    "Pudrición Negra",
+    "Roya del Cedro y Manzano",
+    "Saludable",
+    "Oidio",
+    "Arañita Roja"
 ]
 feature_extractor = load_model("trained_models/feature_extractor_cnn.keras")
 pca_model = load("trained_models/pca_model.joblib")
