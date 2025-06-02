@@ -9,7 +9,7 @@ DATABASE = Path("database/app-db.sqlite")
 
 IMG_HEIGHT, IMG_WIDTH = 256, 256
 diseases = [
-    "Sarna del Manzano"
+    "Sarna del Manzano",
     "Pudrición Negra",
     "Roya del Cedro y Manzano",
     "Saludable",
